@@ -8,12 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned Features
-- Configuration file support
+- Indirect Damage PvP Detection
+- Per-World Configuration
 - Multiple combat speed presets
 - GUI for combat mode management
 - Integration with other combat plugins
 - Statistics tracking
-- World-specific combat modes
+
+## [1.1.0] - 2025-01-29
+
+### Added
+- **Action Bar Status Display** - Real-time combat mode and PvP status notifications
+  - Shows current combat mode (Bedrock/Java) in action bar
+  - Displays PvP status and timeout countdown
+  - Cross-version compatibility using reflection
+  - Configurable update intervals and display options
+- **Enhanced Configuration Options**:
+  - `ui.actionbar.update-interval` - Action bar refresh rate
+  - `ui.actionbar.show-combat-mode` - Toggle combat mode display
+  - `ui.actionbar.show-pvp-status` - Toggle PvP status display
+- **ActionBarManager Class** - Centralized action bar management system
+- **Improved User Experience** - Immediate visual feedback for combat state changes
 
 ## [1.0.0] - 2024-01-XX
 
@@ -63,6 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Release Date | Key Features |
 |---------|--------------|--------------|
+| **1.1.0** | 2025-01-29 | Action Bar Status Display with real-time combat notifications |
 | **1.0.0** | 2024-01-XX | Initial release with core combat toggle functionality |
 
 ---

@@ -6,6 +6,7 @@ import io.github.chiefboyardee.bedrockcombat.performance.PerformanceMonitor;
 import io.github.chiefboyardee.bedrockcombat.integrations.IntegrationManager;
 import io.github.chiefboyardee.bedrockcombat.commands.ConfigCommand;
 import io.github.chiefboyardee.bedrockcombat.pvp.PvPDetectionSystem;
+import io.github.chiefboyardee.bedrockcombat.ui.ActionBarManager;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -69,6 +70,7 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
     private PerformanceMonitor performanceMonitor;
     private IntegrationManager integrationManager;
     private PvPDetectionSystem pvpDetectionSystem;
+    private ActionBarManager actionBarManager;
 
     @Override
     public void onEnable() {
@@ -102,6 +104,10 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
             // Initialize PvP detection system
             pvpDetectionSystem = new PvPDetectionSystem(this, configManager);
             getLogger().info("PvP detection system initialized");
+            
+            // Initialize action bar manager
+            actionBarManager = new ActionBarManager(this, configManager);
+            getLogger().info("Action bar manager initialized");
             
             getLogger().info("Cross-platform combat optimization enabled!");
             getLogger().info("- Bedrock players: Fast combat (" + BEDROCK_ATTACK_SPEED + " attack speed)");
@@ -153,6 +159,11 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
             pvpTimeoutTasks.clear();
             
             // Shutdown systems in reverse order
+            if (actionBarManager != null) {
+                actionBarManager.shutdown();
+                getLogger().info("Action bar manager shutdown");
+            }
+            
             if (performanceMonitor != null) {
                 performanceMonitor.shutdown();
                 getLogger().info("Performance monitor shutdown");
@@ -230,13 +241,9 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
                 player.sendMessage(message);
             }
             
-            // Send action bar if enabled
-            if (configManager.isActionBarEnabled()) {
-                String actionBar = configManager.getActionBarMessage()
-                    .replace("{mode}", "Bedrock")
-                    .replace("&", "§");
-                // Send as regular message since sendActionBar may not be available in all versions
-                player.sendMessage(actionBar);
+            // Start action bar updates if enabled
+            if (actionBarManager != null) {
+                actionBarManager.startActionBarUpdates(player);
             }
             
         } else {
@@ -312,7 +319,8 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
      */
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        UUID playerId = event.getPlayer().getUniqueId();
+        Player player = event.getPlayer();
+        UUID playerId = player.getUniqueId();
         
         // Clean up PvP state
         playersInPvP.remove(playerId);
@@ -321,6 +329,11 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
         BukkitRunnable task = pvpTimeoutTasks.remove(playerId);
         if (task != null) {
             task.cancel();
+        }
+        
+        // Stop action bar updates
+        if (actionBarManager != null) {
+            actionBarManager.stopActionBarUpdates(player);
         }
         
         // Note: We keep bedrockPlayers data for when they rejoin
@@ -395,6 +408,11 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
                 player.sendMessage("§c§lPvP Mode §7§l> §cTemporary Java combat for fair PvP");
             }
             
+            // Update action bar to show PvP status
+            if (actionBarManager != null) {
+                actionBarManager.updatePlayerStatus(player);
+            }
+            
             // Cancel any existing timeout
             BukkitRunnable existingTask = pvpTimeoutTasks.remove(playerId);
             if (existingTask != null) {
@@ -424,6 +442,11 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
             
             if (bedrockPlayers.contains(playerId)) {
                 player.sendMessage("§a§lPvE Mode §7§l> §aController-friendly combat restored");
+            }
+            
+            // Update action bar to show PvE status
+            if (actionBarManager != null) {
+                actionBarManager.updatePlayerStatus(player);
             }
         }
     }
@@ -556,6 +579,10 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
     
     public PvPDetectionSystem getPvPDetectionSystem() {
         return pvpDetectionSystem;
+    }
+    
+    public ActionBarManager getActionBarManager() {
+        return actionBarManager;
     }
     
     // Legacy getter methods for backward compatibility

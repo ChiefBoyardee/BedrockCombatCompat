@@ -198,6 +198,18 @@ public class ConfigManager {
         return config.getBoolean("ui.boss-bar.enabled", false);
     }
     
+    public int getActionBarUpdateInterval() {
+        return config.getInt("ui.actionbar.update-interval", 20);
+    }
+    
+    public boolean showCombatModeInActionBar() {
+        return config.getBoolean("ui.actionbar.show-combat-mode", true);
+    }
+    
+    public boolean showPvPStatusInActionBar() {
+        return config.getBoolean("ui.actionbar.show-pvp-status", true);
+    }
+    
     // Performance Settings
     public boolean isPerformanceMonitoringEnabled() {
         return config.getBoolean("performance.monitoring.enabled", true);

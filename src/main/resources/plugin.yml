@@ -1,5 +1,5 @@
 name: BedrockCombatCompat
-version: 1.0.3
+version: 1.1.0
 main: io.github.chiefboyardee.bedrockcombat.BedrockCombatPlugin
 api-version: 1.21
 description: "Cross-platform combat optimization for Geyser/Floodgate servers - controller-friendly combat for Bedrock players, traditional combat for Java players"
