@@ -28,14 +28,15 @@ if %ERRORLEVEL% neq 0 (
     exit /b 1
 )
 
-REM Copy plugin.yml
-echo Copying plugin.yml...
+REM Copy all resources
+echo Copying resources...
 copy src\main\resources\plugin.yml target\
+copy src\main\resources\config.yml target\
 
 REM Create JAR
 echo Creating JAR file...
 cd target
-jar cf BedrockCombat-1.0.1.jar plugin.yml io/
+jar cf BedrockCombat-1.0.1.jar plugin.yml config.yml io/
 cd ..
 
 echo BedrockCombatCompat plugin built successfully!
