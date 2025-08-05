@@ -1,0 +1,353 @@
+# ========================================
+# BedrockCombatCompat Configuration
+# ========================================
+# Cross-platform combat optimization for Geyser/Floodgate servers
+# 
+# For help and documentation:
+# https://github.com/ChiefBoyardee/BedrockCombatCompat/wiki
+
+# ========================================
+# GENERAL SETTINGS
+# ========================================
+general:
+  # Enable/disable the entire plugin
+  enabled: true
+  
+  # Enable debug logging for troubleshooting
+  debug: false
+  
+  # Check for plugin updates on startup
+  update-checker: true
+  
+  # Language file to use (future feature)
+  language: "en_US"
+
+# ========================================
+# COMBAT SETTINGS
+# ========================================
+combat:
+  # Attack speed values for different combat modes
+  attack-speeds:
+    # Java Edition traditional combat (4.0 = standard Minecraft)
+    java-mode: 4.0
+    
+    # Bedrock Edition controller-friendly combat (1024.0 = no cooldown)
+    bedrock-mode: 1024.0
+    
+    # Custom attack speed for specific scenarios
+    custom-mode: 16.0
+  
+  # Combat mode assignment
+  modes:
+    # Default combat mode for new players
+    # Options: "auto", "java", "bedrock", "custom"
+    default: "auto"
+    
+    # Force all players to use the same combat mode
+    # Options: "disabled", "java", "bedrock", "custom"
+    force-mode: "disabled"
+    
+    # Allow players to change their own combat mode
+    allow-player-toggle: true
+    
+    # Persist combat mode across server restarts
+    save-player-preferences: true
+
+# ========================================
+# PLAYER DETECTION
+# ========================================
+detection:
+  # Automatic Bedrock player detection methods
+  floodgate:
+    # Enable Floodgate integration for automatic detection
+    enabled: true
+    
+    # Bedrock player username prefix (Floodgate default is ".")
+    prefix: "."
+    
+    # Case-sensitive prefix matching
+    case-sensitive: false
+  
+  # Manual detection methods
+  manual:
+    # Allow manual player assignment via commands
+    enabled: true
+    
+    # Require permission for manual assignment
+    require-permission: true
+  
+  # Custom detection rules
+  custom-rules:
+    # Enable custom username patterns
+    enabled: false
+    
+    # List of username patterns that indicate Bedrock players
+    # Supports regex patterns
+    patterns:
+      - "^\\*.*"  # Players starting with *
+      - ".*_mobile$"  # Players ending with _mobile
+      - ".*_console$"  # Players ending with _console
+
+# ========================================
+# PVP SETTINGS
+# ========================================
+pvp:
+  # PvP detection and balancing
+  detection:
+    # Enable automatic PvP detection
+    enabled: true
+    
+    # Revert all players to Java combat during PvP
+    revert-to-java: true
+    
+    # Timeout after PvP ends (in seconds)
+    timeout: 10
+    
+    # Minimum damage to trigger PvP detection
+    min-damage: 0.5
+    
+    # Include indirect damage (arrows, potions, etc.)
+    include-indirect: true
+  
+  # PvP balance options
+  balance:
+    # Equalize attack speeds during PvP
+    equalize-speeds: true
+    
+    # Attack speed to use during PvP
+    pvp-attack-speed: 4.0
+    
+    # Notify players when PvP mode changes
+    notify-players: true
+    
+    # Sound effect when entering/exiting PvP
+    play-sounds: true
+
+# ========================================
+# WORLD SETTINGS
+# ========================================
+worlds:
+  # Per-world configuration
+  enabled: true
+  
+  # Default settings for all worlds
+  default:
+    # Enable combat optimization in this world
+    combat-enabled: true
+    
+    # Enable PvP detection in this world
+    pvp-detection: true
+    
+    # Combat mode override for this world
+    # Options: "default", "java", "bedrock", "custom"
+    force-mode: "default"
+  
+  # Specific world configurations
+  # Example configurations:
+  world-specific:
+    # Creative world - disable combat optimization
+    "creative":
+      combat-enabled: false
+      pvp-detection: false
+      force-mode: "java"
+    
+    # PvP arena - force Java combat for fairness
+    "pvp_arena":
+      combat-enabled: true
+      pvp-detection: false
+      force-mode: "java"
+    
+    # Survival world - full optimization
+    "survival":
+      combat-enabled: true
+      pvp-detection: true
+      force-mode: "default"
+
+# ========================================
+# INTEGRATION SETTINGS
+# ========================================
+integrations:
+  # Plugin integrations
+  plugins:
+    # WorldGuard integration
+    worldguard:
+      enabled: true
+      # Disable combat optimization in safe regions
+      respect-pvp-flags: true
+      # Custom regions where combat is always Java mode
+      java-regions: ["spawn", "safe-zone"]
+    
+    # Essentials integration
+    essentials:
+      enabled: true
+      # Disable combat changes for vanished players
+      respect-vanish: true
+      # Disable combat changes in god mode
+      respect-godmode: true
+    
+    # PlaceholderAPI integration
+    placeholderapi:
+      enabled: true
+      # Provide placeholders for other plugins
+      # %bedrockcombat_mode%, %bedrockcombat_pvp%, etc.
+  
+  # External service integrations
+  services:
+    # Metrics collection (bStats)
+    metrics: true
+    
+    # Discord webhook notifications
+    discord:
+      enabled: false
+      webhook-url: ""
+      notify-events: ["pvp-start", "pvp-end", "mode-change"]
+
+# ========================================
+# USER INTERFACE
+# ========================================
+ui:
+  # Chat messages
+  messages:
+    # Enable chat notifications
+    enabled: true
+    
+    # Message prefix
+    prefix: "&8[&6BedrockCombat&8]&r "
+    
+    # Notify on combat mode changes
+    notify-mode-change: true
+    
+    # Notify on PvP status changes
+    notify-pvp-change: true
+    
+    # Show combat mode in join message
+    show-on-join: false
+  
+  # Action bar notifications
+  actionbar:
+    # Enable action bar messages
+    enabled: true
+    
+    # Show PvP status in action bar
+    show-pvp-status: true
+    
+    # Update interval (in ticks, 20 = 1 second)
+    update-interval: 20
+  
+  # Boss bar notifications
+  bossbar:
+    # Enable boss bar for PvP status
+    enabled: false
+    
+    # Boss bar color during PvP
+    pvp-color: "RED"
+    
+    # Boss bar style
+    style: "SOLID"
+
+# ========================================
+# PERFORMANCE SETTINGS
+# ========================================
+performance:
+  # Optimization settings
+  optimization:
+    # Cache player combat modes
+    cache-modes: true
+    
+    # Cache duration (in minutes)
+    cache-duration: 30
+    
+    # Async processing for non-critical operations
+    async-processing: true
+    
+    # Batch process multiple players
+    batch-processing: true
+    
+    # Maximum batch size
+    batch-size: 50
+  
+  # Resource limits
+  limits:
+    # Maximum PvP sessions to track simultaneously
+    max-pvp-sessions: 1000
+    
+    # Maximum cached player data entries
+    max-cache-entries: 5000
+    
+    # Cleanup interval (in minutes)
+    cleanup-interval: 10
+
+# ========================================
+# ADVANCED FEATURES
+# ========================================
+advanced:
+  # Experimental features (use with caution)
+  experimental:
+    # Custom attack animations for Bedrock players
+    custom-animations: false
+    
+    # Modify reach distance for different platforms
+    modify-reach: false
+    
+    # Custom damage calculations
+    custom-damage: false
+  
+  # API settings for developers
+  api:
+    # Enable developer API
+    enabled: true
+    
+    # Allow external plugins to modify combat modes
+    allow-external-control: true
+    
+    # Fire custom events for other plugins
+    fire-events: true
+  
+  # Database settings (for large servers)
+  database:
+    # Enable database storage for player preferences
+    enabled: false
+    
+    # Database type: "sqlite", "mysql", "postgresql"
+    type: "sqlite"
+    
+    # Connection settings (for MySQL/PostgreSQL)
+    connection:
+      host: "localhost"
+      port: 3306
+      database: "bedrockcombat"
+      username: "user"
+      password: "password"
+      ssl: false
+
+# ========================================
+# COMPATIBILITY SETTINGS
+# ========================================
+compatibility:
+  # Version compatibility
+  versions:
+    # Minimum supported Minecraft version
+    min-version: "1.21"
+    
+    # Maximum supported Minecraft version
+    max-version: "1.21.8"
+    
+    # Warn about unsupported versions
+    warn-unsupported: true
+  
+  # Server software compatibility
+  servers:
+    # Enable Paper-specific optimizations
+    paper-optimizations: true
+    
+    # Enable Purpur-specific features
+    purpur-features: false
+    
+    # Compatibility mode for older servers
+    legacy-mode: false
+
+# ========================================
+# DO NOT MODIFY BELOW THIS LINE
+# ========================================
+# Internal configuration version
+config-version: 1

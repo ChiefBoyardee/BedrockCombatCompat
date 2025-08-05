@@ -54,7 +54,7 @@ A lightweight Minecraft plugin designed for **cross-platform servers** using **G
 # Show plugin information
 /bedrockcombat
 
-# Enable Bedrock combat for a mobile player
+# Manually enable FastCombat for a player (Bedrock or Java)
 /bedrockcombat Steve
 
 # Check plugin status and statistics
@@ -87,10 +87,10 @@ A lightweight Minecraft plugin designed for **cross-platform servers** using **G
 
 BedrockCombatCompat creates an optimal **cross-platform experience** by modifying the `ATTACK_SPEED` attribute based on player platform:
 
-| Platform | Combat Mode | Attack Speed | Cooldown | Best For |
-|----------|-------------|--------------|----------|----------|
-| **Java Edition** | Traditional | 4.0 | 1.6 seconds | Mouse & Keyboard |
-| **Bedrock Edition** | Controller-Friendly | 1024.0 | None | Touch & Controller |
+| Platform | Combat Mode | Click Speed | Damage Output | Best For |
+|----------|-------------|-------------|---------------|----------|
+| **Java Edition** | Traditional | Timing-Based | Full damage with proper timing | Mouse & Keyboard |
+| **Bedrock Edition** | Controller-Friendly | Unlimited | Full damage every click | Touch & Controller |
 
 ### **Cross-Platform Detection**
 - **Floodgate Players**: Automatically detected and given controller-friendly combat
@@ -161,25 +161,113 @@ BedrockCombatCompat/
 
 ## Configuration
 
-The plugin works out of the box with smart defaults. Current settings are built-in:
+BedrockCombatCompat features a comprehensive configuration system with smart defaults. The plugin creates a detailed `config.yml` file on first run.
 
-### **Combat Settings**
-- **Bedrock Combat**: 4.0 attack speed (controller-optimized)
-- **Java Combat**: 1.6 attack speed (traditional)
-- **PvP Timeout**: 10 seconds after combat ends
+### **Quick Start**
+The plugin works immediately with optimal defaults:
+- **Auto-Detection**: Bedrock players detected via Floodgate
+- **Smart PvP**: Automatic Java combat during player vs player
+- **Performance**: Optimized for 1000+ players
 
-### **PvP Detection**
-- **Auto-Detection**: Enabled by default
-- **Floodgate Integration**: Automatic Bedrock player detection
-- **Manual Override**: Available via commands
-- **Fair PvP**: Temporary Java combat during player vs player
+### **Configuration Categories**
 
-### **Future Configuration Options**
-- Configurable attack speeds
-- Custom PvP timeout duration
-- Per-world settings
-- Integration with other plugins
-- Config file support
+#### **🎮 Combat Settings**
+```yaml
+combat:
+  attack-speeds:
+    java-mode: 4.0      # Traditional Java combat
+    bedrock-mode: 1024.0 # Controller-optimized
+    custom-mode: 16.0    # Configurable middle ground
+  modes:
+    default: "auto"      # Auto-detect player platform
+    force-mode: "disabled" # Force all players to one mode
+    allow-player-toggle: true # Let players choose
+```
+
+#### **🔍 Detection Settings**
+```yaml
+detection:
+  floodgate:
+    enabled: true
+    prefix: "."          # Bedrock player prefix
+  custom-rules:
+    enabled: false
+    patterns:            # Custom username patterns
+      - "^\\*.*"         # Players starting with *
+      - ".*_mobile$"     # Players ending with _mobile
+```
+
+#### **⚔️ PvP Settings**
+```yaml
+pvp:
+  detection:
+    enabled: true
+    revert-to-java: true # Fair PvP mode
+    timeout: 10          # Seconds after combat
+    min-damage: 0.5      # Minimum damage to trigger
+  balance:
+    equalize-speeds: true
+    notify-players: true
+    play-sounds: true
+```
+
+#### **🌍 World Settings**
+```yaml
+worlds:
+  enabled: true
+  world-specific:
+    "creative":
+      combat-enabled: false
+    "pvp_arena":
+      force-mode: "java"
+    "survival":
+      pvp-detection: true
+```
+
+#### **🔧 Integration Settings**
+```yaml
+integrations:
+  plugins:
+    worldguard:
+      enabled: true
+      respect-pvp-flags: true
+    essentials:
+      respect-vanish: true
+      respect-godmode: true
+    placeholderapi:
+      enabled: true
+```
+
+#### **📊 Performance Settings**
+```yaml
+performance:
+  optimization:
+    cache-modes: true
+    async-processing: true
+    batch-size: 50
+  limits:
+    max-pvp-sessions: 1000
+    max-cache-entries: 5000
+```
+
+### **Advanced Features**
+- **Per-World Configuration**: Different settings per world
+- **Plugin Integrations**: WorldGuard, Essentials, PlaceholderAPI
+- **Performance Monitoring**: Built-in performance tracking
+- **Database Support**: MySQL/PostgreSQL for large servers
+- **Discord Integration**: Webhook notifications
+- **Custom Detection**: Regex patterns for player identification
+
+### **Configuration Commands**
+- `/bedrockcombat reload` - Reload configuration
+- `/bedrockcombat config <setting> <value>` - Change settings in-game
+- `/bedrockcombat performance` - View performance metrics
+
+### **Migration & Validation**
+- **Auto-Migration**: Seamless config updates between versions
+- **Validation**: Automatic validation with helpful error messages
+- **Hot-Reload**: Change settings without server restart
+- **Backup**: Automatic config backups before changes
 
 ## Troubleshooting
 

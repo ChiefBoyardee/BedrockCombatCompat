@@ -1,5 +1,11 @@
 package io.github.chiefboyardee.bedrockcombat;
 
+import io.github.chiefboyardee.bedrockcombat.config.ConfigManager;
+import io.github.chiefboyardee.bedrockcombat.database.DatabaseManager;
+import io.github.chiefboyardee.bedrockcombat.performance.PerformanceMonitor;
+import io.github.chiefboyardee.bedrockcombat.integrations.IntegrationManager;
+import io.github.chiefboyardee.bedrockcombat.commands.ConfigCommand;
+import io.github.chiefboyardee.bedrockcombat.pvp.PvPDetectionSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -54,6 +60,13 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
     
     /** Whether PvP detection is enabled (can be configured) */
     private boolean pvpDetectionEnabled = true;
+    
+    // New system managers
+    private ConfigManager configManager;
+    private DatabaseManager databaseManager;
+    private PerformanceMonitor performanceMonitor;
+    private IntegrationManager integrationManager;
+    private PvPDetectionSystem pvpDetectionSystem;
 
     @Override
     public void onEnable() {
@@ -63,6 +76,30 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
             getLogger().info("Server version: " + getServer().getVersion());
             getLogger().info("Bukkit version: " + getServer().getBukkitVersion());
             getLogger().info("========================================");
+            
+            // Initialize configuration manager first
+            configManager = new ConfigManager(this);
+            configManager.loadConfig();
+            getLogger().info("Configuration loaded successfully");
+            
+            // Initialize database manager
+            databaseManager = new DatabaseManager(this, configManager);
+            databaseManager.initialize();
+            getLogger().info("Database initialized successfully");
+            
+            // Initialize performance monitor
+            performanceMonitor = new PerformanceMonitor(this, configManager);
+            performanceMonitor.initialize();
+            getLogger().info("Performance monitoring initialized");
+            
+            // Initialize integration manager
+            integrationManager = new IntegrationManager(this, configManager);
+            integrationManager.initialize();
+            getLogger().info("Integrations initialized");
+            
+            // Initialize PvP detection system
+            pvpDetectionSystem = new PvPDetectionSystem(this, configManager);
+            getLogger().info("PvP detection system initialized");
             
             getLogger().info("Cross-platform combat optimization enabled!");
             getLogger().info("- Bedrock players: Fast combat (" + BEDROCK_ATTACK_SPEED + " attack speed)");
@@ -75,8 +112,9 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
             getLogger().info("Event listeners registered successfully!");
             
             // Register commands
-            this.getCommand("bedrockcombat").setExecutor(this);
-            this.getCommand("bedrockcombat").setTabCompleter(this);
+            ConfigCommand configCommand = new ConfigCommand(this);
+            getCommand("bedrockcombat").setExecutor(configCommand);
+            getCommand("bedrockcombat").setTabCompleter(configCommand);
             getLogger().info("Commands registered successfully!");
             
             getLogger().info("========================================");
@@ -99,6 +137,11 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
             getLogger().info("========================================");
             getLogger().info("BedrockCombat v" + getDescription().getVersion() + " is shutting down...");
             
+            // Reset all players to default combat speed
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                setJavaCombat(player);
+            }
+            
             // Cancel all PvP timeout tasks
             pvpTimeoutTasks.values().forEach(task -> {
                 if (task != null && !task.isCancelled()) {
@@ -106,6 +149,22 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
                 }
             });
             pvpTimeoutTasks.clear();
+            
+            // Shutdown systems in reverse order
+            if (performanceMonitor != null) {
+                performanceMonitor.shutdown();
+                getLogger().info("Performance monitor shutdown");
+            }
+            
+            if (integrationManager != null) {
+                integrationManager.disable();
+                getLogger().info("Integrations disabled");
+            }
+            
+            if (databaseManager != null) {
+                databaseManager.close();
+                getLogger().info("Database connection closed");
+            }
             
             // Clear player data
             bedrockPlayers.clear();
@@ -130,12 +189,54 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
         
-        if (player.getName().startsWith(".")) {
-            // Floodgate/Bedrock player detected
+        // Record performance metrics
+        if (performanceMonitor != null) {
+            performanceMonitor.recordOperation("player_join");
+        }
+        
+        // Check if player detection is enabled
+        if (!configManager.isPlayerDetectionEnabled()) {
+            return;
+        }
+        
+        boolean isBedrockPlayer = false;
+        
+        // Use integration manager to detect Bedrock players
+        if (integrationManager != null && integrationManager.isFloodgateEnabled()) {
+            isBedrockPlayer = integrationManager.isBedrockPlayer(player);
+        } else {
+            // Fallback to prefix detection
+            isBedrockPlayer = player.getName().startsWith(configManager.getFloodgatePrefix());
+        }
+        
+        if (isBedrockPlayer) {
+            // Bedrock player detected
             bedrockPlayers.add(playerId);
+            
+            // Load player data from database
+            if (databaseManager != null) {
+                databaseManager.loadPlayerData(playerId);
+            }
+            
             applyCombatMode(player);
-            player.sendMessage("§a§lBedrockCombat §7§l> §aController-friendly combat enabled!");
-            player.sendMessage("§7§l> §7PvP will temporarily use Java combat for fairness");
+            
+            // Send welcome message if enabled
+            if (configManager.isWelcomeMessageEnabled()) {
+                String message = configManager.getWelcomeMessage()
+                    .replace("{player}", player.getName())
+                    .replace("&", "§");
+                player.sendMessage(message);
+            }
+            
+            // Send action bar if enabled
+            if (configManager.isActionBarEnabled()) {
+                String actionBar = configManager.getActionBarMessage()
+                    .replace("{mode}", "Bedrock")
+                    .replace("&", "§");
+                // Send as regular message since sendActionBar may not be available in all versions
+                player.sendMessage(actionBar);
+            }
+            
         } else {
             // Java player - ensure they're not in bedrock set and apply Java combat
             bedrockPlayers.remove(playerId);
@@ -148,15 +249,36 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
      */
     @EventHandler
     public void onPlayerDamagePlayer(EntityDamageByEntityEvent event) {
-        if (!pvpDetectionEnabled) return;
+        if (!configManager.isPvpDetectionEnabled()) return;
         
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
             Player attacker = (Player) event.getDamager();
             Player victim = (Player) event.getEntity();
             
+            // Record performance metrics
+            if (performanceMonitor != null) {
+                performanceMonitor.recordOperation("pvp_event");
+            }
+            
+            // Check if PvP is allowed in this world
+            if (!configManager.isPvpEnabledInWorld(attacker.getWorld().getName())) {
+                return;
+            }
+            
+            // Use PvP detection system
+            if (pvpDetectionSystem != null) {
+                pvpDetectionSystem.handlePvPEvent(attacker, victim);
+            }
+            
             // Both players enter PvP mode (temporary Java combat)
             enterPvPMode(attacker);
             enterPvPMode(victim);
+            
+            // Save combat statistics
+            if (databaseManager != null) {
+                databaseManager.saveCombatStatistic(attacker.getUniqueId(), "pvp_attack", 1);
+                databaseManager.saveCombatStatistic(victim.getUniqueId(), "pvp_damaged", 1);
+            }
         }
     }
 
@@ -376,98 +498,64 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
         }
     }
 
+    // Getter methods for accessing the new systems
+    public ConfigManager getConfigManager() {
+        return configManager;
+    }
+    
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+    
+    public PerformanceMonitor getPerformanceMonitor() {
+        return performanceMonitor;
+    }
+    
+    public IntegrationManager getIntegrationManager() {
+        return integrationManager;
+    }
+    
+    public PvPDetectionSystem getPvPDetectionSystem() {
+        return pvpDetectionSystem;
+    }
+    
+    // Legacy getter methods for backward compatibility
+    public Set<UUID> getBedrockPlayers() {
+        return new HashSet<>(bedrockPlayers);
+    }
+    
+    public Set<UUID> getPlayersInPvP() {
+        return new HashSet<>(playersInPvP);
+    }
+    
+    public boolean isPvpDetectionEnabled() {
+        return configManager != null ? configManager.isPvpDetectionEnabled() : pvpDetectionEnabled;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        // Commands are now handled by ConfigCommand
+        // This method is kept for backward compatibility
         if (args.length == 0) {
-            sender.sendMessage("§6§lBedrockCombat §7v" + getDescription().getVersion());
-            sender.sendMessage("§7Cross-platform combat optimization");
+            sender.sendMessage("§6§lBedrockCombatCompat §7v" + getDescription().getVersion());
+            sender.sendMessage("§7Cross-platform combat optimization with advanced configuration");
             sender.sendMessage("");
             sender.sendMessage("§e§lCommands:");
-            sender.sendMessage("§7/" + label + " <player> §8- §7Toggle combat mode");
+            sender.sendMessage("§7/" + label + " help §8- §7Show all available commands");
             sender.sendMessage("§7/" + label + " status §8- §7Show plugin status");
             sender.sendMessage("§7/" + label + " reload §8- §7Reload configuration");
             return true;
         }
-
-        if (args[0].equalsIgnoreCase("status")) {
-            sender.sendMessage("§6§lBedrockCombat Status:");
-            sender.sendMessage("§7PvP Detection: " + (pvpDetectionEnabled ? "§aEnabled" : "§cDisabled"));
-            sender.sendMessage("§7PvP Timeout: §e" + PVP_TIMEOUT_SECONDS + "s");
-            sender.sendMessage("§7Bedrock Players: §e" + bedrockPlayers.size());
-            sender.sendMessage("§7Players in PvP: §c" + playersInPvP.size());
-            return true;
-        }
-
-        if (args[0].equalsIgnoreCase("reload")) {
-            if (!sender.hasPermission("bedrockcombat.admin")) {
-                sender.sendMessage("§c§lError: §7You don't have permission to reload the plugin.");
-                return true;
-            }
-            
-            // Simple reload - could be expanded with config file later
-            sender.sendMessage("§a§lBedrockCombat §7reloaded successfully!");
-            return true;
-        }
-
-        // Player toggle command
-        Player target = Bukkit.getPlayerExact(args[0]);
-        if (target == null) {
-            sender.sendMessage("§c§lError: §7Player '" + args[0] + "' not found or not online.");
-            return true;
-        }
-
-        UUID targetId = target.getUniqueId();
         
-        // Toggle player's preference
-        if (bedrockPlayers.contains(targetId)) {
-            // Remove from Bedrock players
-            bedrockPlayers.remove(targetId);
-            applyCombatMode(target);
-            
-            sender.sendMessage("§e§lBedrockCombat §7disabled for §e" + target.getName() + "§7.");
-            target.sendMessage("§c§lBedrockCombat §7§l> §cJava combat mode enabled");
-            
-            if (playersInPvP.contains(targetId)) {
-                target.sendMessage("§7§l> §7Currently in PvP mode");
-            }
-        } else {
-            // Add to Bedrock players
-            bedrockPlayers.add(targetId);
-            applyCombatMode(target);
-            
-            sender.sendMessage("§a§lBedrockCombat §7enabled for §a" + target.getName() + "§7.");
-            target.sendMessage("§a§lBedrockCombat §7§l> §aController-friendly combat enabled!");
-            
-            if (playersInPvP.contains(targetId)) {
-                target.sendMessage("§7§l> §7Currently in PvP mode (temporary Java combat)");
-            } else {
-                target.sendMessage("§7§l> §7PvP will temporarily use Java combat for fairness");
-            }
-        }
-
-        return true;
+        // Redirect to ConfigCommand if available
+        ConfigCommand configCommand = new ConfigCommand(this);
+        return configCommand.onCommand(sender, command, label, args);
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length == 1) {
-            String prefix = args[0].toLowerCase();
-            List<String> completions = new ArrayList<>();
-            
-            // Add command options
-            if ("status".startsWith(prefix)) completions.add("status");
-            if ("reload".startsWith(prefix) && sender.hasPermission("bedrockcombat.admin")) {
-                completions.add("reload");
-            }
-            
-            // Add player names
-            completions.addAll(Bukkit.getOnlinePlayers().stream()
-                .map(Player::getName)
-                .filter(name -> name.toLowerCase().startsWith(prefix))
-                .collect(Collectors.toList()));
-                
-            return completions;
-        }
-        return List.of();
+        // Tab completion is now handled by ConfigCommand
+        ConfigCommand configCommand = new ConfigCommand(this);
+        return configCommand.onTabComplete(sender, command, alias, args);
     }
 }

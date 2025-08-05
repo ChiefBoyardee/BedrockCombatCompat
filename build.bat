@@ -19,7 +19,9 @@ echo Using API JAR: %API_JAR%
 
 REM Compile Java source
 echo Compiling Java source...
-javac -cp "%API_JAR%" -d target src\main\java\io\github\chiefboyardee\bedrockcombat\BedrockCombatPlugin.java
+for /r src\main\java %%f in (*.java) do echo %%f >> sources.txt
+javac -cp "%API_JAR%" -d target @sources.txt
+del sources.txt
 if %ERRORLEVEL% neq 0 (
     echo Compilation failed!
     pause
@@ -33,14 +35,14 @@ copy src\main\resources\plugin.yml target\
 REM Create JAR
 echo Creating JAR file...
 cd target
-jar cf BedrockCombat-1.0.0.jar plugin.yml io/
+jar cf BedrockCombat-1.0.1.jar plugin.yml io/
 cd ..
 
 echo BedrockCombatCompat plugin built successfully!
-echo JAR file: target\bedrock-combat-compat-1.0.0.jar
+echo JAR file: target\BedrockCombat-1.0.1.jar
 echo.
 echo To use this plugin:
-echo 1. Copy target\BedrockCombat-1.0.0.jar to your server's plugins folder
+echo 1. Copy target\BedrockCombat-1.0.1.jar to your server's plugins folder
 echo 2. Restart your server
 echo 3. Use /bedrockcombat ^<player^> to toggle Bedrock combat for a player
 echo 4. Players with names starting with '.' automatically get Bedrock combat
