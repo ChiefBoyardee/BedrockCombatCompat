@@ -1,7 +1,6 @@
 # BedrockCombat
 
 [![GitHub release](https://img.shields.io/github/v/release/ChiefBoyardee/BedrockCombat)](https://github.com/ChiefBoyardee/BedrockCombat/releases)
-[![Modrinth Downloads](https://img.shields.io/modrinth/dt/bedrock-combat?logo=modrinth)](https://modrinth.com/plugin/bedrock-combat)
 [![GitHub license](https://img.shields.io/github/license/ChiefBoyardee/BedrockCombat)](https://github.com/ChiefBoyardee/BedrockCombat/blob/main/LICENSE)
 [![Spigot Version](https://img.shields.io/badge/Spigot-1.20.4+-orange)](https://www.spigotmc.org/)
 [![Geyser Compatible](https://img.shields.io/badge/Geyser-Compatible-blue)](https://geysermc.org/)
@@ -273,7 +272,6 @@ We welcome contributions! Here's how to get started:
 
 ## Statistics
 
-- **Downloads**: Available on [Modrinth](https://modrinth.com/plugin/bedrock-combat)
 - **GitHub Stars**: [Star this repo](https://github.com/ChiefBoyardee/BedrockCombat) if you find it useful!
 - **Issues**: Report bugs on [GitHub Issues](https://github.com/ChiefBoyardee/BedrockCombat/issues)
 
