@@ -36,14 +36,14 @@ copy src\main\resources\config.yml target\
 REM Create JAR
 echo Creating JAR file...
 cd target
-jar cf BedrockCombat-1.0.1.jar plugin.yml config.yml io/
+jar cf BedrockCombat-1.0.2.jar plugin.yml config.yml io/
 cd ..
 
 echo BedrockCombatCompat plugin built successfully!
-echo JAR file: target\BedrockCombat-1.0.1.jar
+echo JAR file: target\BedrockCombat-1.0.2.jar
 echo.
 echo To use this plugin:
-echo 1. Copy target\BedrockCombat-1.0.1.jar to your server's plugins folder
+echo 1. Copy target\BedrockCombat-1.0.2.jar to your server's plugins folder
 echo 2. Restart your server
 echo 3. Use /bedrockcombat ^<player^> to toggle Bedrock combat for a player
 echo 4. Players with names starting with '.' automatically get Bedrock combat
