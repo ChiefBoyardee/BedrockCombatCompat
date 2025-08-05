@@ -17,8 +17,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.block.Action;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.attribute.AttributeModifier;
@@ -322,6 +324,43 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
         }
         
         // Note: We keep bedrockPlayers data for when they rejoin
+    }
+
+    /**
+     * Handles player interactions to apply cooldown to all swings during PvP mode
+     * This ensures Bedrock players experience consistent cooldown during PvP, not just on hits
+     */
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        UUID playerId = player.getUniqueId();
+        
+        // Only process left-click air/block actions (swings)
+        if (event.getAction() != Action.LEFT_CLICK_AIR && event.getAction() != Action.LEFT_CLICK_BLOCK) {
+            return;
+        }
+        
+        // Only apply to Bedrock players who are currently in PvP mode
+        if (!bedrockPlayers.contains(playerId) || !playersInPvP.contains(playerId)) {
+            return;
+        }
+        
+        // Check if PvP detection is enabled
+        if (!configManager.isPvpDetectionEnabled()) {
+            return;
+        }
+        
+        // Record performance metrics
+        if (performanceMonitor != null) {
+            performanceMonitor.recordOperation("pvp_swing");
+        }
+        
+        // Refresh PvP timeout since player is actively swinging during PvP
+        startPvPTimeout(player);
+        
+        // The cooldown effect is already applied by being in PvP mode (Java combat)
+        // This event handler ensures the timeout is refreshed on all swings, not just hits
+        getLogger().fine("PvP swing detected for Bedrock player: " + player.getName());
     }
 
     /**
