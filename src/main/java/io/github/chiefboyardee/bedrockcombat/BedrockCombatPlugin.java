@@ -80,7 +80,8 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
             getLogger().info("Commands registered successfully!");
             
             getLogger().info("========================================");
-            getLogger().info("BedrockCombat plugin successfully enabled!");
+            getLogger().info("BedrockCombatCompat plugin enabled!");
+            getLogger().info("Cross-platform combat optimization active");
             getLogger().info("Use /bedrockcombat for help and commands");
             getLogger().info("========================================");
             
@@ -111,7 +112,7 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
             playersInPvP.clear();
             
             getLogger().info("Player data cleared and tasks cancelled");
-            getLogger().info("BedrockCombat plugin disabled successfully!");
+            getLogger().info("BedrockCombatCompat plugin disabled successfully!");
             getLogger().info("========================================");
             
         } catch (Exception e) {

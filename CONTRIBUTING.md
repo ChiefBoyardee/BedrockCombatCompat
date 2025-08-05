@@ -1,6 +1,6 @@
-# Contributing to BedrockCombat
+# Contributing to BedrockCombatCompat
 
-Thank you for your interest in contributing to BedrockCombat! We welcome contributions from the community and are grateful for any help you can provide.
+Thank you for your interest in contributing to BedrockCombatCompat! We welcome contributions from the community and are grateful for any help you can provide.
 
 ## Table of Contents
 
@@ -38,12 +38,12 @@ This project adheres to a code of conduct that we expect all contributors to fol
 1. **Fork** the repository on GitHub
 2. **Clone** your fork locally:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/BedrockCombat.git
-   cd BedrockCombat
+   git clone https://github.com/YOUR_USERNAME/BedrockCombatCompat.git
+   cd BedrockCombatCompat
    ```
 3. **Add upstream** remote:
    ```bash
-   git remote add upstream https://github.com/ChiefBoyardee/BedrockCombat.git
+   git remote add upstream https://github.com/ChiefBoyardee/BedrockCombatCompat.git
    ```
 
 ## How to Contribute

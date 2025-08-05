@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.chiefboyardee</groupId>
-    <artifactId>bedrock-combat</artifactId>
+    <artifactId>bedrock-combat-compat</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>BedrockCombat</name>
+    <name>BedrockCombatCompat</name>
     <description>Cross-platform combat optimization for Geyser/Floodgate servers - provides controller-friendly combat for Bedrock players while preserving traditional Java combat mechanics</description>
-    <url>https://github.com/ChiefBoyardee/BedrockCombat</url>
+    <url>https://github.com/ChiefBoyardee/BedrockCombatCompat</url>
 
     <developers>
         <developer>

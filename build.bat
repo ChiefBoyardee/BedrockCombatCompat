@@ -36,8 +36,8 @@ cd target
 jar cf BedrockCombat-1.0.0.jar plugin.yml io/
 cd ..
 
-echo Build completed successfully!
-echo JAR file created: target\BedrockCombat-1.0.0.jar
+echo BedrockCombatCompat plugin built successfully!
+echo JAR file: target\bedrock-combat-compat-1.0.0.jar
 echo.
 echo To use this plugin:
 echo 1. Copy target\BedrockCombat-1.0.0.jar to your server's plugins folder

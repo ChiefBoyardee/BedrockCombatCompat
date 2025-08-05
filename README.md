@@ -1,7 +1,7 @@
-# BedrockCombat
+# BedrockCombatCompat
 
-[![GitHub release](https://img.shields.io/github/v/release/ChiefBoyardee/BedrockCombat)](https://github.com/ChiefBoyardee/BedrockCombat/releases)
-[![GitHub license](https://img.shields.io/github/license/ChiefBoyardee/BedrockCombat)](https://github.com/ChiefBoyardee/BedrockCombat/blob/main/LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/ChiefBoyardee/BedrockCombatCompat)](https://github.com/ChiefBoyardee/BedrockCombatCompat/releases)
+[![GitHub license](https://img.shields.io/github/license/ChiefBoyardee/BedrockCombatCompat)](https://github.com/ChiefBoyardee/BedrockCombatCompat/blob/main/LICENSE)
 [![Spigot Version](https://img.shields.io/badge/Spigot-1.20.4+-orange)](https://www.spigotmc.org/)
 [![Geyser Compatible](https://img.shields.io/badge/Geyser-Compatible-blue)](https://geysermc.org/)
 
@@ -24,7 +24,7 @@ A lightweight Minecraft plugin designed for **cross-platform servers** using **G
 ## Quick Start
 
 1. **Ensure** you have [Geyser](https://geysermc.org/) and [Floodgate](https://github.com/GeyserMC/Floodgate) installed for cross-platform support
-2. **Download** the latest `BedrockCombat-1.0.0.jar` from [releases](https://github.com/ChiefBoyardee/BedrockCombat/releases)
+2. **Download** the latest `BedrockCombatCompat-1.0.0.jar` from [releases](https://github.com/ChiefBoyardee/BedrockCombatCompat/releases)
 3. **Place** it in your server's `plugins` folder
 4. **Restart** your server
 5. **Bedrock players** automatically get controller-friendly combat, **Java players** keep traditional combat
@@ -85,7 +85,7 @@ A lightweight Minecraft plugin designed for **cross-platform servers** using **G
 
 ## How It Works
 
-BedrockCombat creates an optimal **cross-platform experience** by modifying the `ATTACK_SPEED` attribute based on player platform:
+BedrockCombatCompat creates an optimal **cross-platform experience** by modifying the `ATTACK_SPEED` attribute based on player platform:
 
 | Platform | Combat Mode | Attack Speed | Cooldown | Best For |
 |----------|-------------|--------------|----------|----------|
@@ -134,7 +134,7 @@ javac -cp "spigot-api-1.21.8-R0.1-20250729.092320-4.jar" -d target src/main/java
 copy src/main/resources/plugin.yml target/
 
 # Create JAR
-cd target && jar cf BedrockCombat-1.0.0.jar -C . .
+cd target && jar cf BedrockCombatCompat-1.0.0.jar -C . .
 ```
 
 #### Option 3: Maven
@@ -145,13 +145,13 @@ mvn clean compile package
 ## Project Structure
 
 ```
-BedrockCombat/
+BedrockCombatCompat/
 +-- src/main/java/io/github/chiefboyardee/bedrockcombat/
 |   +-- BedrockCombatPlugin.java
 +-- src/main/resources/
 |   +-- plugin.yml
 +-- target/
-|   +-- BedrockCombat-1.0.0.jar
+|   +-- BedrockCombatCompat-1.0.0.jar
 +-- build.bat
 +-- pom.xml
 +-- README.md
@@ -259,7 +259,7 @@ We welcome contributions! Here's how to get started:
 ### Why Geyser + Floodgate?
 - **Geyser** allows Bedrock Edition players to join Java servers
 - **Floodgate** enables Bedrock players to join without Java accounts
-- **BedrockCombat** automatically detects these players and optimizes their experience
+- **BedrockCombatCompat** automatically detects these players and optimizes their experience
 
 ## Server Compatibility
 
@@ -272,8 +272,8 @@ We welcome contributions! Here's how to get started:
 
 ## Statistics
 
-- **GitHub Stars**: [Star this repo](https://github.com/ChiefBoyardee/BedrockCombat) if you find it useful!
-- **Issues**: Report bugs on [GitHub Issues](https://github.com/ChiefBoyardee/BedrockCombat/issues)
+- **GitHub Stars**: [Star this repo](https://github.com/ChiefBoyardee/BedrockCombatCompat) if you find it useful!
+- **Issues**: Report bugs on [GitHub Issues](https://github.com/ChiefBoyardee/BedrockCombatCompat/issues)
 
 ## License
 
@@ -306,9 +306,9 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## Support
 
-- **Bug Reports**: [GitHub Issues](https://github.com/ChiefBoyardee/BedrockCombat/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/ChiefBoyardee/BedrockCombat/discussions)
-- **Documentation**: [Wiki](https://github.com/ChiefBoyardee/BedrockCombat/wiki)
+- **Bug Reports**: [GitHub Issues](https://github.com/ChiefBoyardee/BedrockCombatCompat/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/ChiefBoyardee/BedrockCombatCompat/discussions)
+- **Documentation**: [Wiki](https://github.com/ChiefBoyardee/BedrockCombatCompat/wiki)
 
 ---
 
@@ -316,6 +316,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 **Made with love for the Minecraft community**
 
-[Back to Top](#️-bedrockcombat)
+[Back to Top](#️-bedrockcombatcompat)
 
 </div>
