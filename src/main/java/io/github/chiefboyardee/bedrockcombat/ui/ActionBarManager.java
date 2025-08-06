@@ -3,6 +3,7 @@ package io.github.chiefboyardee.bedrockcombat.ui;
 import io.github.chiefboyardee.bedrockcombat.BedrockCombatPlugin;
 import io.github.chiefboyardee.bedrockcombat.config.ConfigManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -142,33 +143,33 @@ public class ActionBarManager {
         
         // Combat mode indicator
         if (configManager.showCombatModeInActionBar()) {
-            String modeColor = "Bedrock".equals(combatMode) ? "§a" : "§b";
-            message.append("§7Combat: ").append(modeColor).append(combatMode).append(" ");
+            String modeColor = "Bedrock".equals(combatMode) ? "&a" : "&b";
+            message.append("&7Combat: ").append(modeColor).append(combatMode).append(" ");
         }
         
         // PvP status indicator
         if (configManager.showPvPStatusInActionBar() && inPvP) {
-            message.append("§c⚔ PvP Mode §c");
+            message.append("&c⚔ PvP Mode &c");
             
             // Add PvP timeout countdown if available
             int timeoutSeconds = plugin.getConfigManager().getPvpTimeout();
             if (timeoutSeconds > 0) {
-                message.append(" (").append(timeoutSeconds).append("s)");
+                message.append(" &e(").append(timeoutSeconds).append("s)");
             }
         }
         
         // Mode transition indicator
         if (!combatMode.equals(state.lastCombatMode)) {
-            message.append(" §e→ ").append(combatMode);
+            message.append(" &e→ ").append(combatMode);
         }
         
         // Clean up and apply color codes
         String result = message.toString().trim();
         if (result.isEmpty()) {
-            result = "§7Combat Ready";
+            result = "&7Combat Ready";
         }
         
-        return result.replace("&", "§");
+        return ChatColor.translateAlternateColorCodes('&', result);
     }
     
     /**
@@ -212,7 +213,7 @@ public class ActionBarManager {
             return;
         }
         
-        String message = "§e⚡ Combat Mode: §f" + newMode;
+        String message = ChatColor.translateAlternateColorCodes('&', "&e⚡ Combat Mode: &f" + newMode);
         sendActionBar(player, message);
         
         // Schedule immediate update
@@ -227,7 +228,7 @@ public class ActionBarManager {
             return;
         }
         
-        String message = "§c⚔ Entering PvP Mode!";
+        String message = ChatColor.translateAlternateColorCodes('&', "&c⚔ Entering PvP Mode!");
         sendActionBar(player, message);
         
         // Schedule immediate update
@@ -242,7 +243,7 @@ public class ActionBarManager {
             return;
         }
         
-        String message = "§a✓ PvP Mode Ended";
+        String message = ChatColor.translateAlternateColorCodes('&', "&a✓ PvP Mode Ended");
         sendActionBar(player, message);
         
         // Schedule immediate update

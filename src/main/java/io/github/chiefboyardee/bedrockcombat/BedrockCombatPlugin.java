@@ -8,6 +8,7 @@ import io.github.chiefboyardee.bedrockcombat.commands.ConfigCommand;
 import io.github.chiefboyardee.bedrockcombat.pvp.PvPDetectionSystem;
 import io.github.chiefboyardee.bedrockcombat.ui.ActionBarManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.Command;
@@ -236,9 +237,8 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
             // Send welcome message if enabled
             if (configManager.isWelcomeMessageEnabled()) {
                 String message = configManager.getWelcomeMessage()
-                    .replace("{player}", player.getName())
-                    .replace("&", "§");
-                player.sendMessage(message);
+                    .replace("{player}", player.getName());
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
             }
             
             // Start action bar updates if enabled
@@ -405,7 +405,7 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
             setJavaCombat(player);
             
             if (bedrockPlayers.contains(playerId)) {
-                player.sendMessage("§c§lPvP Mode §7§l> §cTemporary Java combat for fair PvP");
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c&lPvP Mode &7&l> &cTemporary Java combat for fair PvP"));
             }
             
             // Update action bar to show PvP status
@@ -441,7 +441,7 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
             applyCombatMode(player);
             
             if (bedrockPlayers.contains(playerId)) {
-                player.sendMessage("§a§lPvE Mode §7§l> §aController-friendly combat restored");
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lPvE Mode &7&l> &aController-friendly combat restored"));
             }
             
             // Update action bar to show PvE status
@@ -603,13 +603,13 @@ public class BedrockCombatPlugin extends JavaPlugin implements Listener, TabComp
         // Commands are now handled by ConfigCommand
         // This method is kept for backward compatibility
         if (args.length == 0) {
-            sender.sendMessage("§6§lBedrockCombatCompat §7v" + getDescription().getVersion());
-            sender.sendMessage("§7Cross-platform combat optimization with advanced configuration");
-            sender.sendMessage("");
-            sender.sendMessage("§e§lCommands:");
-            sender.sendMessage("§7/" + label + " help §8- §7Show all available commands");
-            sender.sendMessage("§7/" + label + " status §8- §7Show plugin status");
-            sender.sendMessage("§7/" + label + " reload §8- §7Reload configuration");
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6&lBedrockCombatCompat &7v" + getDescription().getVersion()));
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Cross-platform combat optimization with advanced configuration"));
+        sender.sendMessage("");
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e&lCommands:"));
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7/" + label + " help &8- &7Show all available commands"));
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7/" + label + " status &8- &7Show plugin status"));
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7/" + label + " reload &8- &7Reload configuration"));
             return true;
         }
         
